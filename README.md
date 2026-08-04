@@ -86,7 +86,11 @@ it with `?theme=dark` or `?theme=light`, combinable with `user`, e.g.
   the constants at the top of `scripts/fetch.mjs`.
 - **A cofounder's tab is empty** — their tasks aren't assigned to them via
   the `Assignee` property, or nothing is marked `Done` yet.
-- **"updated N min ago" looks stale** — it reflects when the *counts last
-  changed*, not the last poll; unchanged runs don't rewrite data.json. The
-  page refetches data.json every 5 minutes and whenever it becomes visible
-  again, so long-lived Notion embeds stay in sync with the site on their own.
+- **"last activity N hr ago" looks stale** — it reflects when the *counts
+  last changed* (a task completed/un-completed), not the last poll; unchanged
+  runs don't rewrite data.json. The page refetches data.json every 5 minutes
+  and whenever it becomes visible again, so long-lived Notion embeds stay in
+  sync with the site on their own. Note GitHub throttles the `*/5` cron
+  heavily in practice (observed ~hourly), so new completions can take up to
+  ~an hour to appear; a repository_dispatch trigger is wired in for anyone
+  who wants to add an event-driven relay later.

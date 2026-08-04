@@ -345,11 +345,13 @@
     var gen = data.generatedAt ? new Date(data.generatedAt) : null;
     if (gen && !isNaN(gen)) {
       var mins = Math.max(0, Math.round((Date.now() - gen.getTime()) / 60000));
-      var ago = mins < 1 ? "just now"
-        : mins < 60 ? "updated " + mins + " min ago"
-        : mins < 1440 ? "updated " + Math.round(mins / 60) + " hr ago"
-        : "updated " + Math.round(mins / 1440) + " days ago";
+      var ago = mins < 1 ? "last activity just now"
+        : mins < 60 ? "last activity " + mins + " min ago"
+        : mins < 1440 ? "last activity " + Math.round(mins / 60) + " hr ago"
+        : "last activity " + Math.round(mins / 1440) + " days ago";
       updated.textContent = ago;
+      updated.title = "When a completed task last changed the counts (" +
+        gen.toLocaleString() + "). The widget re-checks for new data every 5 minutes.";
     } else {
       updated.textContent = "";
     }
