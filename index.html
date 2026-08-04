@@ -7,9 +7,15 @@
 <script>
   // Runs before first paint. ?theme=dark|light pins the theme (Notion embeds
   // follow the OS scheme, not Notion's own setting); default is auto.
+  // "standalone" (not in an iframe) gets an opaque canvas: a transparent body
+  // in a plain browser tab sits on a white default canvas even when the OS is
+  // dark, which made the dark palette render as black boxes on white.
   (function () {
+    var cls = [];
     var t = new URLSearchParams(location.search).get("theme");
-    if (t === "dark" || t === "light") document.documentElement.className = "theme-" + t;
+    if (t === "dark" || t === "light") cls.push("theme-" + t);
+    if (window.self === window.top) cls.push("standalone");
+    document.documentElement.className = cls.join(" ");
   })();
 </script>
 <style>
@@ -56,8 +62,13 @@
     --tooltip-bg: #2f2f2f;
     --tooltip-text: rgba(255, 255, 255, 0.9);
   }
-  /* Auto mode stays transparent to blend into the Notion page; a pinned theme
-     paints Notion's canvas color so the page also reads standalone. */
+  /* Only an embedded auto-mode page stays transparent (so it blends into the
+     Notion canvas). Standalone tabs and pinned themes paint an opaque canvas,
+     since browsers default the canvas to white regardless of OS scheme. */
+  :root.standalone body { background: #ffffff; }
+  @media (prefers-color-scheme: dark) {
+    :root.standalone:not(.theme-light) body { background: #191919; }
+  }
   :root.theme-dark body { background: #191919; }
   :root.theme-light body { background: #ffffff; }
   * { box-sizing: border-box; }
@@ -376,7 +387,7 @@
       console.error(err);
       var msg = $("message");
       msg.textContent =
-        "No data yet — the hourly refresh hasn't published data.json. Check back soon.";
+        "No data yet — the auto-refresh hasn't published data.json. Check back soon.";
       msg.hidden = false;
     });
 })();
