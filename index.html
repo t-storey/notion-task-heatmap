@@ -332,6 +332,15 @@
     }
     legend.appendChild(document.createTextNode("More"));
 
+    renderUpdated();
+
+    $("message").hidden = true;
+    $("chart").hidden = false;
+    $("footer").hidden = false;
+  }
+
+  function renderUpdated() {
+    if (!data) return;
     var updated = $("updated");
     var gen = data.generatedAt ? new Date(data.generatedAt) : null;
     if (gen && !isNaN(gen)) {
@@ -344,9 +353,6 @@
     } else {
       updated.textContent = "";
     }
-
-    $("chart").hidden = false;
-    $("footer").hidden = false;
   }
 
   // Tooltip
@@ -373,12 +379,36 @@
     }
   });
 
-  buildTabs();
-  fetch("./data.json?v=" + Date.now())
-    .then(function (res) {
+  function fetchData() {
+    return fetch("./data.json?v=" + Date.now()).then(function (res) {
       if (!res.ok) throw new Error("data.json returned " + res.status);
       return res.json();
-    })
+    });
+  }
+
+  // Long-lived embeds (Notion keeps iframes mounted for hours) refetch on an
+  // interval and when the page becomes visible again, so the widget stays in
+  // sync with the site without a manual reload.
+  var REFRESH_MS = 5 * 60 * 1000;
+  var refreshing = false;
+  function refresh() {
+    if (refreshing) return;
+    refreshing = true;
+    fetchData()
+      .then(function (json) {
+        if (JSON.stringify(json) !== JSON.stringify(data)) {
+          data = json;
+          render();
+        }
+      })
+      .catch(function () {
+        // Transient failure: keep showing the data we already have.
+      })
+      .then(function () { refreshing = false; });
+  }
+
+  buildTabs();
+  fetchData()
     .then(function (json) {
       data = json;
       render();
@@ -390,6 +420,12 @@
         "No data yet — the auto-refresh hasn't published data.json. Check back soon.";
       msg.hidden = false;
     });
+
+  setInterval(refresh, REFRESH_MS);
+  setInterval(renderUpdated, 60000);
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) refresh();
+  });
 })();
 </script>
 </body>

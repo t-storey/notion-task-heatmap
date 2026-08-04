@@ -87,4 +87,6 @@ it with `?theme=dark` or `?theme=light`, combinable with `user`, e.g.
 - **A cofounder's tab is empty** — their tasks aren't assigned to them via
   the `Assignee` property, or nothing is marked `Done` yet.
 - **"updated N min ago" looks stale** — it reflects when the *counts last
-  changed*, not the last poll; unchanged hourly runs don't rewrite data.json.
+  changed*, not the last poll; unchanged runs don't rewrite data.json. The
+  page refetches data.json every 5 minutes and whenever it becomes visible
+  again, so long-lived Notion embeds stay in sync with the site on their own.
