@@ -74,8 +74,11 @@ Type `/embed`, paste one of these URLs, drag to resize:
 By default the widget follows the **OS** color scheme (Notion embeds don't
 expose Notion's own theme). If your Notion theme doesn't match your OS, pin
 it with `?theme=dark` or `?theme=light`, combinable with `user`, e.g.
-`.../?user=tom&theme=dark`. A pinned theme also paints Notion's canvas color
-(`#191919` dark / white light) instead of a transparent background.
+`.../?user=tom&theme=dark`. The widget always paints its own canvas using
+Notion's exact canvas colors (white / `#191919`): matched themes look
+seamless, mismatched ones render as a readable card rather than invisible
+text. Since Notion themes are per-person, auto mode is the best default for
+a page viewed by people with different settings.
 
 ## Troubleshooting
 

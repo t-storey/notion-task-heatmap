@@ -7,15 +7,9 @@
 <script>
   // Runs before first paint. ?theme=dark|light pins the theme (Notion embeds
   // follow the OS scheme, not Notion's own setting); default is auto.
-  // "standalone" (not in an iframe) gets an opaque canvas: a transparent body
-  // in a plain browser tab sits on a white default canvas even when the OS is
-  // dark, which made the dark palette render as black boxes on white.
   (function () {
-    var cls = [];
     var t = new URLSearchParams(location.search).get("theme");
-    if (t === "dark" || t === "light") cls.push("theme-" + t);
-    if (window.self === window.top) cls.push("standalone");
-    document.documentElement.className = cls.join(" ");
+    if (t === "dark" || t === "light") document.documentElement.className = "theme-" + t;
   })();
 </script>
 <style>
@@ -62,19 +56,20 @@
     --tooltip-bg: #2f2f2f;
     --tooltip-text: rgba(255, 255, 255, 0.9);
   }
-  /* Only an embedded auto-mode page stays transparent (so it blends into the
-     Notion canvas). Standalone tabs and pinned themes paint an opaque canvas,
-     since browsers default the canvas to white regardless of OS scheme. */
-  :root.standalone body { background: #ffffff; }
+  /* The canvas is always painted opaque. #ffffff / #191919 are Notion's own
+     canvas colors, so a matched-theme embed looks seamless, while a
+     mismatched one (viewer's OS scheme differs from their Notion theme)
+     degrades to a readable card instead of invisible text on white —
+     transparency only ever looked better in the case that already worked. */
   @media (prefers-color-scheme: dark) {
-    :root.standalone:not(.theme-light) body { background: #191919; }
+    :root:not(.theme-light) body { background: #191919; }
   }
   :root.theme-dark body { background: #191919; }
   :root.theme-light body { background: #ffffff; }
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    background: transparent;
+    background: #ffffff;
     color: var(--text);
     font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
       Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
