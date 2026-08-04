@@ -71,6 +71,12 @@ Type `/embed`, paste one of these URLs, drag to resize:
   - `https://t-storey.github.io/notion-task-heatmap/?user=ivan`
   - `https://t-storey.github.io/notion-task-heatmap/?user=gabe`
 
+By default the widget follows the **OS** color scheme (Notion embeds don't
+expose Notion's own theme). If your Notion theme doesn't match your OS, pin
+it with `?theme=dark` or `?theme=light`, combinable with `user`, e.g.
+`.../?user=tom&theme=dark`. A pinned theme also paints Notion's canvas color
+(`#191919` dark / white light) instead of a transparent background.
+
 ## Troubleshooting
 
 - **Workflow fails with 404** — the Tasks database isn't connected to the

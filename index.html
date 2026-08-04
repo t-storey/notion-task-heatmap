@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Task Heatmap</title>
+<script>
+  // Runs before first paint. ?theme=dark|light pins the theme (Notion embeds
+  // follow the OS scheme, not Notion's own setting); default is auto.
+  (function () {
+    var t = new URLSearchParams(location.search).get("theme");
+    if (t === "dark" || t === "light") document.documentElement.className = "theme-" + t;
+  })();
+</script>
 <style>
   :root {
     --text: #37352f;
@@ -18,21 +26,40 @@
     --tooltip-bg: #37352f;
     --tooltip-text: #ffffff;
   }
+  /* Notion dark-mode tokens: canvas #191919, primary text 81% white,
+     secondary 46%, dividers 9.4%. Applied via OS scheme unless ?theme= pins it. */
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not(.theme-light) {
       --text: rgba(255, 255, 255, 0.81);
-      --muted: #9b9b9b;
-      --border: rgba(255, 255, 255, 0.13);
+      --muted: rgba(255, 255, 255, 0.46);
+      --border: rgba(255, 255, 255, 0.094);
       --tab-hover: rgba(255, 255, 255, 0.055);
-      --cell-empty: #2e2e2e;
+      --cell-empty: #252525;
       --l1: #0e4429;
       --l2: #006d32;
       --l3: #26a641;
       --l4: #39d353;
-      --tooltip-bg: #e9e9e7;
-      --tooltip-text: #191919;
+      --tooltip-bg: #2f2f2f;
+      --tooltip-text: rgba(255, 255, 255, 0.9);
     }
   }
+  :root.theme-dark {
+    --text: rgba(255, 255, 255, 0.81);
+    --muted: rgba(255, 255, 255, 0.46);
+    --border: rgba(255, 255, 255, 0.094);
+    --tab-hover: rgba(255, 255, 255, 0.055);
+    --cell-empty: #252525;
+    --l1: #0e4429;
+    --l2: #006d32;
+    --l3: #26a641;
+    --l4: #39d353;
+    --tooltip-bg: #2f2f2f;
+    --tooltip-text: rgba(255, 255, 255, 0.9);
+  }
+  /* Auto mode stays transparent to blend into the Notion page; a pinned theme
+     paints Notion's canvas color so the page also reads standalone. */
+  :root.theme-dark body { background: #191919; }
+  :root.theme-light body { background: #ffffff; }
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -138,6 +165,7 @@
     pointer-events: none;
     white-space: nowrap;
     z-index: 10;
+    box-shadow: rgba(15, 15, 15, 0.2) 0 2px 8px;
   }
   #message { font-size: 13px; color: var(--muted); padding: 8px 0; }
 </style>
